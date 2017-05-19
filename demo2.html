@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0
+        }
+
+        .navbar {
+            position: fixed;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            align-items: center;
+            background: #000000;
+            height: 40px;
+            opacity: 0;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: #ffffff;
+            font-size: 14px;
+            width: 25%;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            align-items: center;
+        }
+
+
+        .content {
+            height: 500px;
+        }
+
+        .otherbody {
+            height: 500px;
+            background: chocolate
+        }
+
+        .s1 {
+            background: pink
+        }
+
+        .s2 {
+            background: yellow
+        }
+
+        .s3 {
+            background: blanchedalmond
+        }
+
+        .s4 {
+            background: chocolate
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <a href="#a">导航一</a>
+        <a href="#b">导航二</a>
+        <a href="#c">导航三</a>
+        <a href="#d">导航四</a>
+    </div>
+    <div class="otherbody">
+
+    </div>
+    <div class="content s1">导航一内容</div>
+    <div class="content s2">导航二内容</div>
+    <div class="content s3">导航三内容</div>
+    <div class="content s4">导航四内容</div>
+</body>
+<script>
+    var navHeight, itemHeight, bodyHeight
+    function animate(obj, json, interval, sp, fn) {
+        clearInterval(obj.timer);
+        //var k = 0;
+        //var j = 0;
+        function getStyle(obj, arr) {
+            if (obj.currentStyle) {
+                return obj.currentStyle[arr];    //针对ie
+            } else {
+                return document.defaultView.getComputedStyle(obj, null)[arr];
+            }
+        }
+        obj.timer = setInterval(function () {
+            //j ++;
+            var flag = true;
+            for (var arr in json) {
+                var icur = 0;
+                //k++;
+                if (arr == "opacity") {
+                    icur = Math.round(parseFloat(getStyle(obj, arr)) * 100);
+                } else {
+                    icur = parseInt(getStyle(obj, arr));
+                }
+                var speed = (json[arr] - icur) * sp;
+                speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+                if (icur != json[arr]) {
+                    flag = false;
+                }
+                if (arr == "opacity") {
+                    obj.style.filter = "alpha(opacity : '+(icur + speed)+' )";
+                    obj.style.opacity = (icur + speed) / 100;
+                } else {
+                    obj.style[arr] = icur + speed + "px";
+                }
+                //console.log(j + "," + arr +":"+ flag);
+            }
+
+            if (flag) {
+                clearInterval(obj.timer);
+                //console.log(j + ":" + flag);  
+                //console.log("k = " + k);
+                //console.log("j = " + j);
+                //console.log("DONE");
+                if (fn) {
+                    fn();
+                }
+            }
+        }, interval);
+        function addEvent(event, callback) {
+            dom.addEventListener(event, callback, false)
+        }
+    }
+
+    //鼠标滑动的时候，距离为otherbody的高度，nav的opacity从0 到一显示    
+    var alist = document.querySelectorAll('.navbar a');
+    var contents = document.querySelectorAll('.content');
+    var navbar = document.querySelector('.navbar')
+    each(contents, setHeight)
+    contents[0].style.height = window.screen.height - navbar.offsetHeight;
+    function setHeight(item, index) {
+        item.style.height = window.screen.height - navbar.offsetHeight + "px";
+    }
+    /*document.body.onscroll = function () {
+        var scrolltop = document.body.scrollTop;
+        var bodyHeight = document.querySelector(".otherbody").offsetHeight;
+        navbar.style.opacity = scrolltop / bodyHeight;
+        if (contents[index].offsetTop == navbar.offsetHeight) {
+            each(this.parentNode.children, function (list) {
+                list.style.background = "#000000"
+            })
+            contents[index].style.background = "red"
+        }
+    }*/
+    function changestyle(items) {
+        for (var i = 0; i < items.length; i++) {
+
+        }
+
+    }
+    function showNav() {
+        var scrolltop = document.body.scrollTop;
+        bodyHeight = document.querySelector(".otherbody").offsetHeight;
+        navbar.style.opacity = scrolltop / bodyHeight;
+        if (navbar.style.opacity >= 1) {
+            navbar.style.opacity = 1
+        }
+    }
+    each(contents, changestyle)
+    //监听滚动时间
+    window.addEventListener('scroll', function () {
+        showNav()
+       
+        for (var i = 0; i < contents.length - 1; i++) {
+            if (document.body.scrollTop >= contents[i].offsetTop - navbar.offsetHeight &&
+                document.body.scrollTop < contents[i + 1].offsetTop - navbar.offsetHeight) {
+                each(contents[i].parentNode.children, function () {
+                    alist[i].style.background = "#000000"
+                })
+                alist[i].style.background = "red"
+            } else {
+                alist[i].style.background = "black"
+            }
+        }
+        //  content[contents.length - 1]
+        if (document.body.scrollTop == contents[contents.length - 1].offsetTop - navbar.offsetHeight ) {
+            // each(contents[i].parentNode.children, function () {
+            //     alist[i].style.background = "#000000"
+            // })
+            alist[i].style.background = "red"
+        } else {
+            alist[i].style.background = "black"
+        }
+
+    })
+
+
+
+
+    //    找到对应的content内容，截取到href的内容，设置相对应的id，当点击头部的时候跳转到该锚点
+    var arrId = [];
+    function each(lists, callback) {
+        for (var i = 0; i < lists.length; i++) {
+            callback(lists[i], i)
+        }
+    }
+
+    //获取id 放在一个数组里面
+    function getId(list, index) {
+        //点击设置颜色
+        list.onclick = function () {
+            //点击设置滚动的高度
+            document.body.scrollTop = contents[index].offsetTop - navbar.offsetHeight;
+            console.log(document.body.scrollTop)
+            each(this.parentNode.children, function (list) {
+                list.style.background = "#000000"
+            })
+            this.style.background = "red"
+
+        }
+
+
+    }
+    //设置id
+    //设置contents对应的id
+
+    //点击导航条到对应的内容，内容的卷曲的头部为
+
+    //当下拉到特定区域的时候，内容的头部对应的颜色变化
+    function changecolor(item, index) {
+        if (item.offsetTop == navbar.offsetHeight) {
+            console.log(item.offsetTop)
+            alist[index].style.backgroundcolor = "red"
+        } else {
+            // alist[index].style.color = "blue"
+        }
+    }
+    each(alist, getId)
+
+</script>
+
+</html>
